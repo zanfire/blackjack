@@ -5,6 +5,14 @@
 
 #include "blackjack.hpp"
 
+static char ask_hint() {
+  char c = getchar();
+  // flush the stdin.
+  char ch;
+  while ((ch = getchar()) != '\n' && ch != EOF) continue;
+  return tolower(c);
+}
+
 int main(int argc, char **argv) {
 
   // Set UTF-8 for unicode symbols.
@@ -15,10 +23,11 @@ int main(int argc, char **argv) {
   Blackjack bj;
   // Loop on the menu
   while (true) {
-    
-    std::cout << "Do you want start a new round? exit or show leaderboard?" << std::endl; 
-    PlayResult res = bj.play();
-    bj.dump_leaderboard();
+    std::cout << "Do you want start a " << underline << "N" << normal << "ew round? " << underline << "E" << normal << "xit or " << underline << "S" << normal << "how leaderboard?" << std::endl;
+    char hint = ask_hint();
+    if (hint == 'n') bj.play();
+    else if (hint == 's') bj.dump_leaderboard();
+    else if (hint == 'e') break;
   }
   return EXIT_SUCCESS;
 }

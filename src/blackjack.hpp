@@ -16,13 +16,11 @@
 #include "hand.hpp"
 #include "deck.hpp"
 
-
 constexpr char underline[] = {0x1b,'[','4',';','3','9','m',0};
 constexpr char bold_green[] = {0x1b,'[','1',';','3','2','m',0};
 constexpr char bold_red[] = {0x1b,'[','1',';','3','1','m',0};
 constexpr char bold_yellow[] = {0x1b,'[','1',';','3','3','m',0};
 constexpr char normal[] = {0x1b,'[','0',';','3','9','m',0};
-
 
 static bool ask_hit_or_stand() {
   while(true) {
@@ -185,7 +183,7 @@ private:
     if (res == PLAY_RESULT_PLAYER_WIN) std::cout << bold_green;
     else if (res == PLAY_RESULT_DEALER_WIN) std::cout << bold_red;
     else if (res == PLAY_RESULT_TIE) std::cout << bold_yellow;
-    std::cout << to_friendly_string(res) << normal << std::endl;
+    std::cout << to_friendly_string(res) << normal << std::endl << std::endl;
 
     return res;
   }
