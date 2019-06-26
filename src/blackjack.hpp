@@ -165,8 +165,13 @@ private:
     std::streamsize ss = std::cout.precision();
     std::cout.precision(2);
     std::cout << " \xE2\x9C\x8F " <<  std::setw(10) << name << ":\t" << 
-                                      std::setw(10) << result_counters_[res] << "\t" << 
-                                      std::setw(10) << std::fixed << (float)result_counters_[res] / rounds_ * 100.0f  << "%" << std::endl;
+                                      std::setw(10) << result_counters_[res] << "\t";
+    if (rounds_ == 0) {
+      std::cout << std::setw(10) << "0%" << std::endl;
+    }
+    else {
+      std::cout << std::setw(10) << std::fixed << (float)result_counters_[res] / rounds_ * 100.0f  << "%" << std::endl;
+    }
     std::cout.precision(ss);
   }
 
