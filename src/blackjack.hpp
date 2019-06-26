@@ -87,34 +87,28 @@ public:
     Hand dealer("dealer");
     Hand player("player one");
 
-    // Give players two cards.
+    // give player a card.
     Card c = deck_.draw();
     std::cout << " " << action_mark << " player draw " << c.to_string() << " ..." << std::endl;
     if (c.invalid()) return;
     player.add(c);
     wait();
+    // give dealer a card
+    c = deck_.draw();
+    std::cout << " " << action_mark << " dealer draw " << c.to_string() << " ..." << std::endl;
+    if (c.invalid()) return;
+    dealer.add(c);
+    wait();
+    // Give player a card.
     c = deck_.draw();
     std::cout << " " << action_mark << " player draw " << c.to_string() << " ..." << std::endl;
     if (c.invalid()) return;
     player.add(c);
     wait();
 
-    // Show user their hand.
+    // Show player their hand.
     player.dump();
-
-    // if players have bust dealer WIN??
-    if (player.is_bust()) { // cannot happen 10 + 10 == 20.
-      record_result(PLAY_RESULT_DEALER_WIN);
-      return;
-    }
-    // give dealer a hand
-    c = deck_.draw();
-    std::cout << " " << action_mark << " dealer draw " << c.to_string() << " ..." << std::endl;
-    if (c.invalid()) return;
-    dealer.add(c);
-    wait();
-    // NOTE: Other countries use only one card, US use two card, one covered.
-    // we go for the other countries solution (no insurance and other casino rules) for simplicity.
+    // Show dealer their hand.
     dealer.dump();
 
     // Player turn.
@@ -151,10 +145,9 @@ public:
   
     wait();
     if (dealer.best_value() == player.best_value()) {
-      // Tie.
       record_result(PLAY_RESULT_TIE);
     }
-    if (dealer.best_value() > player.best_value()) {
+    else if (dealer.best_value() > player.best_value()) {
       record_result(PLAY_RESULT_DEALER_WIN);
     }
     else {

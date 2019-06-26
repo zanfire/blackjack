@@ -81,7 +81,7 @@ public:
     }
     if (!line.empty()) line.erase(line.size()-2);
     
-    std::cout << "Hand " << name_ << ": " << line << " (";
+    std::cout << name_ << "'s hand: " << line << " (";
     int l = value(false);
     int h = value(true);
     std::cout << l;
@@ -91,7 +91,7 @@ public:
     std::cout << ")";
 
     if (is_bust()) {
-      std::cout << bold_red << " bust" << normal;
+      std::cout << bold_red << " busted" << normal;
     }
     std::cout << std::endl;
   }

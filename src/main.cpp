@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   Blackjack bj;
   // Loop on the menu options.
   while (true) {
-    std::cout << "Do you want start a " << underline << "N" << normal << "ew round? " << underline << "E" << normal << "xit or " << underline << "S" << normal << "how leaderboard?" << std::endl;
+    std::cout << "Do you want start a " << underline << "N" << normal << "ew round? " << underline << "E" << normal << "xit or " << underline << "S" << normal << "how leaderboard? ";
     char hint = ask_hint();
     // take action from the hint.
     if (hint == 'n') bj.play();
