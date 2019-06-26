@@ -1,5 +1,7 @@
 # Blackjack game
 
+![Image description](preview.png)
+
 A simple blackjack implementation with use of unicode (suits) and escape code (underline and colors).
 Requires a terminal able to use UTF-8.
 
