@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 // Blackjack
+#include "constants.hpp"
 #include "card.hpp"
 
 class Hand {
@@ -87,7 +88,12 @@ public:
     if (l != h) {
       std::cout << "/" << h;
     } 
-    std::cout << ")" << std::endl;
+    std::cout << ")";
+
+    if (is_bust()) {
+      std::cout << bold_red << " bust" << normal;
+    }
+    std::cout << std::endl;
   }
 };
 

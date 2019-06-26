@@ -8,16 +8,10 @@
 #include <chrono>
 #include <thread>
 // Blackjack
+#include "constants.hpp"
 #include "card.hpp"
 #include "hand.hpp"
 #include "deck.hpp"
-
-// Usefull consts.
-constexpr char underline[] = {0x1b,'[','4',';','3','9','m',0};
-constexpr char bold_green[] = {0x1b,'[','1',';','3','2','m',0};
-constexpr char bold_red[] = {0x1b,'[','1',';','3','1','m',0};
-constexpr char bold_yellow[] = {0x1b,'[','1',';','3','3','m',0};
-constexpr char normal[] = {0x1b,'[','0',';','3','9','m',0};
 
 /**
  * @brief Ask user gor hit or stand.
@@ -85,7 +79,7 @@ public:
     rounds_ += 1;
     std::cout << std::endl << "Playing round " << rounds_ << " ..." << std::endl;
     if ((rounds_ % 6) == 0) {
-      std::cout << " \xE2\x8C\x9B reshuffle ..." << std::endl;
+      std::cout << " " << action_mark << " reshuffle ..." << std::endl;
       wait();
       deck_ = Deck();
       deck_.shuffle();
@@ -95,12 +89,12 @@ public:
 
     // Give players two cards.
     Card c = deck_.draw();
-    std::cout << " \xE2\x8C\x9B player draw " << c.to_string() << " ..." << std::endl;
+    std::cout << " " << action_mark << " player draw " << c.to_string() << " ..." << std::endl;
     if (c.invalid()) return;
     player.add(c);
     wait();
     c = deck_.draw();
-    std::cout << " \xE2\x8C\x9B player draw " << c.to_string() << " ..." << std::endl;
+    std::cout << " " << action_mark << " player draw " << c.to_string() << " ..." << std::endl;
     if (c.invalid()) return;
     player.add(c);
     wait();
@@ -115,7 +109,7 @@ public:
     }
     // give dealer a hand
     c = deck_.draw();
-    std::cout << " \xE2\x8C\x9B dealer draw " << c.to_string() << " ..." << std::endl;
+    std::cout << " " << action_mark << " dealer draw " << c.to_string() << " ..." << std::endl;
     if (c.invalid()) return;
     dealer.add(c);
     wait();
@@ -127,7 +121,7 @@ public:
     while (ask_hit_or_stand()) {
       // hit
       c = deck_.draw();
-      std::cout << " \xE2\x8C\x9B player draw " << c.to_string() << " ..." << std::endl;
+      std::cout << " " << action_mark << " player draw " << c.to_string() << " ..." << std::endl;
       if (c.invalid()) return;
       player.add(c);
       wait();
@@ -142,7 +136,7 @@ public:
     // Dealer turn.
     while (!dealer.is_soft_17()) {
       c = deck_.draw();
-      std::cout << " \xE2\x8C\x9B dealer draw " << c.to_string() << std::endl;
+      std::cout << " " << action_mark << " dealer draw " << c.to_string() << std::endl;
       if (c.invalid()) return;
       dealer.add(c);
       wait();
