@@ -4,33 +4,47 @@
 // STL
 #include <vector>
 #include <algorithm>
-#include <random>
+#include <numeric>
 // Blackjack
 #include "card.hpp"
 
 class Hand {
 private:
+  // Name, (ex: dealer/player)
   char const* name_;
+  // Vector of cards in hand.
   std::vector<Card> hand_;
 
 public:
-  Hand(char const* name) : name_(name) {
-  }
+  Hand(char const* name) : name_(name) {}
 
+  /**
+   * @brief Add one card to the hand.
+   * 
+   * @param c 
+   */
   void add(Card const& c) {
     hand_.push_back(c);
   }
 
-  bool bust() {
-    int sum = std::accumulate(hand_.begin(), hand_.end(), 0,
-                              [](int const& v, Card const& c) { return v + c.value(false); });
-    return sum > 21;
+  /**
+   * @brief Check if hand is busted (total value > 21).
+   * 
+   * @return true 
+   * @return false 
+   */
+  bool is_bust() {
+    return value() > 21;
   }
 
+  /**
+   * @brief Check if hand is over or equal to 17.
+   * 
+   * @return true 
+   * @return false 
+   */
   bool is_soft_17() {
-    int sum = std::accumulate(hand_.begin(), hand_.end(), 0,
-                              [](int const& v, Card const& c) { return v + c.value(false); });
-    return sum >= 17;
+    return value() >= 17;
   }
 
   /** 
@@ -57,8 +71,7 @@ public:
   }
 
   /**
-   * @brief Dump on stdout deck.
-   * 
+   * @brief Dump on stdout ahnd..
    */
   void dump() {
     std::string line;

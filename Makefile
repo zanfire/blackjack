@@ -1,10 +1,7 @@
 src = $(wildcard src/*.cpp)
 obj = $(src:.c=.o)
 
-
-# Others libs
-LDLIBS  += -ldl -lpthread
-# Code is in C++11. (not in 14 because we target an Ubuntu 16.04 that uses a gcc 5).
+# Code is in C++11. (not in 14 because we target an Ubuntu 16.04 that uses a gcc 5, no C++14).
 CXXFLAGS=-g -std=c++11 -Wall -pedantic -I src
 
 .PHONY: blackjack clean distclean

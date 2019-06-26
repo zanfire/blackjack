@@ -29,7 +29,6 @@ public:
 
   /**
    * @brief Randmoly shuffle deck.
-   * 
    */
   void shuffle() {
     static std::random_device rd;
@@ -49,11 +48,9 @@ public:
       deck_.pop_back();
       return c;
     }
+    // This supposed to not happen but in theory can happen. 
     std::abort();
-    //
-    // TODO: INVALID !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //
-    return Card(FACE_ACE, SUIT_CLUB);
+    return Card(true); // create a special card that is invalid.
   }
 };
 

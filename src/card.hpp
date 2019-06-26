@@ -27,7 +27,6 @@ enum Suit {
   SUIT_SPADE
 };
 
-
 static char to_friendly_string(Face f) {
   if (f == FACE_ACE) return 'A';
   if (f == FACE_JACK) return 'J';
@@ -50,28 +49,55 @@ static char const* to_friendly_string(Suit s) {
   return "?";
 }
 
+/**
+ * @brief Model one card.
+ * 
+ */
 class Card {
 private:
   Face face_;
   Suit suit_;
-
+  bool invalid_ = false;
 public:
-  Card(Face f, Suit s) : face_(f), suit_(s) {
-  }
+  Card(Face f, Suit s) : face_(f), suit_(s) {}
+  Card(bool invalid) : invalid_(invalid) {}
 
+  /**
+   * @brief Return if the card is invalid.
+   * 
+   * @return true 
+   * @return false 
+   */
+  bool invalid() { return invalid_; }
+
+  /**
+   * @brief Return a string that rapresent this card.
+   * 
+   * @return std::string 
+   */
   std::string to_string() const {
+    if (invalid_) return "invalid";
     return std::string() + to_friendly_string(face_) + ' ' + to_friendly_string(suit_);
   }
 
+  /**
+   * @brief Return value of this card.
+   * 
+   * @param ace11 if true we handle ace as 11 otherwise as 1.
+   * @return int value of this card.
+   */
   int value(bool ace11 = false) const {
+    if (invalid_) return 0;
+    // ace
     if (face_ == FACE_ACE) return ace11 ? 11 : 1;
+    // numbers.
     if ((int)face_ >= (int)FACE_TWO && (int)face_ <= (int)FACE_NINE) {
       return (int)face_;
     }
+    // figures.
     if ((int)face_ >= (int)FACE_JACK && (int)face_ <= (int)FACE_KING) {
       return 10;
     }
-    std::abort();
     return 0;
   }
 };

@@ -7,21 +7,24 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
-//
-
-#include <wchar.h>
-
 // Blackjack
 #include "card.hpp"
 #include "hand.hpp"
 #include "deck.hpp"
 
+// Usefull consts.
 constexpr char underline[] = {0x1b,'[','4',';','3','9','m',0};
 constexpr char bold_green[] = {0x1b,'[','1',';','3','2','m',0};
 constexpr char bold_red[] = {0x1b,'[','1',';','3','1','m',0};
 constexpr char bold_yellow[] = {0x1b,'[','1',';','3','3','m',0};
 constexpr char normal[] = {0x1b,'[','0',';','3','9','m',0};
 
+/**
+ * @brief Ask user gor hit or stand.
+ * 
+ * @return true 
+ * @return false 
+ */
 static bool ask_hit_or_stand() {
   while(true) {
     std::cout << underline << "H" << normal << "it/" << underline << "S" << normal << "tand? ";
@@ -59,10 +62,14 @@ char const* to_friendly_string(PlayResult r) {
  */
 class Blackjack {
 private:
+  // my deck.
   Deck deck_;
+  // Counter of rounds.
   int rounds_ = 0;
+  // counters of results for players and dealers.
   unsigned long result_counters_[3] = {0, 0, 0};
-  int sleep_between_actions_ms_ = 700;
+  // default wait between each action.
+  int sleep_between_actions_ms_ = 500; // 500 ms.
 public:
   Blackjack() {
     deck_.shuffle();
@@ -74,7 +81,7 @@ public:
    * @return true if player win.
    * @return false if dealer win.
    */
-  PlayResult play() {
+  void play() {
     rounds_ += 1;
     std::cout << std::endl << "Playing round " << rounds_ << " ..." << std::endl;
     if ((rounds_ % 6) == 0) {
@@ -89,10 +96,12 @@ public:
     // Give players two cards.
     Card c = deck_.draw();
     std::cout << " \xE2\x8C\x9B player draw " << c.to_string() << " ..." << std::endl;
+    if (c.invalid()) return;
     player.add(c);
     wait();
     c = deck_.draw();
     std::cout << " \xE2\x8C\x9B player draw " << c.to_string() << " ..." << std::endl;
+    if (c.invalid()) return;
     player.add(c);
     wait();
 
@@ -100,60 +109,68 @@ public:
     player.dump();
 
     // if players have bust dealer WIN??
-    if (player.bust()) { // cannot happen 10 + 10 == 20.
-      return record_result(PLAY_RESULT_DEALER_WIN);
+    if (player.is_bust()) { // cannot happen 10 + 10 == 20.
+      record_result(PLAY_RESULT_DEALER_WIN);
+      return;
     }
     // give dealer a hand
     c = deck_.draw();
     std::cout << " \xE2\x8C\x9B dealer draw " << c.to_string() << " ..." << std::endl;
+    if (c.invalid()) return;
     dealer.add(c);
     wait();
-    // Europe use only one card, american use two card, one covered.
-    //p.add(deck_.draw());
+    // NOTE: Other countries use only one card, US use two card, one covered.
+    // we go for the other countries solution (no insurance and other casino rules) for simplicity.
     dealer.dump();
 
-    // Main loop.
-
+    // Player turn.
     while (ask_hit_or_stand()) {
       // hit
       c = deck_.draw();
       std::cout << " \xE2\x8C\x9B player draw " << c.to_string() << " ..." << std::endl;
+      if (c.invalid()) return;
       player.add(c);
       wait();
       player.dump();
     
-      if (player.bust()) {
+      if (player.is_bust()) {
         // Player loss.
-        return record_result(PLAY_RESULT_DEALER_WIN);
+        record_result(PLAY_RESULT_DEALER_WIN);
+        return;
       }
     }
-
+    // Dealer turn.
     while (!dealer.is_soft_17()) {
       c = deck_.draw();
       std::cout << " \xE2\x8C\x9B dealer draw " << c.to_string() << std::endl;
+      if (c.invalid()) return;
       dealer.add(c);
       wait();
       dealer.dump();
     }
 
-    if (dealer.bust()) {
+    if (dealer.is_bust()) {
       // dealer is over 21, loss.
-      return record_result(PLAY_RESULT_PLAYER_WIN);
+      record_result(PLAY_RESULT_PLAYER_WIN);
+      return;
     }
   
     wait();
     if (dealer.best_value() == player.best_value()) {
       // Tie.
-      return record_result(PLAY_RESULT_TIE);
+      record_result(PLAY_RESULT_TIE);
     }
     if (dealer.best_value() > player.best_value()) {
-      return record_result(PLAY_RESULT_DEALER_WIN);
+      record_result(PLAY_RESULT_DEALER_WIN);
     }
     else {
-      return record_result(PLAY_RESULT_PLAYER_WIN);
+      record_result(PLAY_RESULT_PLAYER_WIN);
     }
   }
 
+  /**
+   * @brief Dump on the stdout the leaderboard.
+   */
   void dump_leaderboard() {
     dump_leaderboard_line("player", PLAY_RESULT_PLAYER_WIN);
     dump_leaderboard_line("dealer", PLAY_RESULT_DEALER_WIN);
@@ -161,6 +178,12 @@ public:
   }
 
 private:
+  /**
+   * @brief Dump one line of the leaderboard.
+   * 
+   * @param name 
+   * @param res 
+   */
   void dump_leaderboard_line(char const* name, PlayResult res) {
     std::streamsize ss = std::cout.precision();
     std::cout.precision(2);
